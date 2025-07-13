@@ -17,4 +17,9 @@ export function requireAuth() {
     window.location.href = '/login';
   }
   return token;
+}
+
+export function logout() {
+  localStorage.removeItem('token');
+  window.location.href = '/login';
 } 

@@ -83,16 +83,16 @@ const ProductsPage: React.FC = () => {
             <table style={{ width: '100%', borderCollapse: 'collapse' }}>
               <thead>
                 <tr>
-                  <th style={{ textAlign: 'left', padding: 8, borderBottom: '1px solid #eee', width: 220 }}>Ad</th>
-                  <th style={{ textAlign: 'left', padding: 8, borderBottom: '1px solid #eee', width: 340 }}>Açıklama</th>
+                  <th style={{ textAlign: 'left', padding: 8, borderBottom: '1px solid #eee', width: 180 }}>Ad</th>
+                  <th style={{ textAlign: 'left', padding: 8, borderBottom: '1px solid #eee', width: 200 }}>Açıklama</th>
                   <th style={{ textAlign: 'left', padding: 8, borderBottom: '1px solid #eee', width: 120 }}>İşlemler</th>
                 </tr>
               </thead>
               <tbody>
                 {products.map((product) => (
                   <tr key={product.id}>
-                    <td style={{ padding: 8, borderBottom: '1px solid #f4f6fb', width: 220 }}>{product.productName}</td>
-                    <td style={{ padding: 8, borderBottom: '1px solid #f4f6fb', width: 340 }}>{product.productDescription}</td>
+                    <td style={{ padding: 8, borderBottom: '1px solid #f4f6fb', width: 180 }}>{product.productName}</td>
+                    <td style={{ padding: 8, borderBottom: '1px solid #f4f6fb', width: 200 }}>{product.productDescription}</td>
                     <td style={{ padding: 8, borderBottom: '1px solid #f4f6fb', width: 120, textAlign: 'right' }}>
                       <Button 
                         variant="outline" 

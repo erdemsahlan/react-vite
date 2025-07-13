@@ -4,6 +4,10 @@ export interface ProductDto {
   id: number;
   productName: string;
   productDescription: string;
+  totalAmount: number;
+  active: boolean;
+  createdDate: string;
+  updateDate: string;
 }
 
 export const createProduct = (product: Omit<ProductDto, 'id'>) =>

@@ -2,15 +2,21 @@ import api from '@/api';
 
 export type AlisSatis = 'ALIS' | 'SATIS';
 export type ParaTipi = 'TURKLIRASI' | 'DOLAR' | 'EURO';
+export type OdemeTip = 'CEK' | 'NAKIT' | 'KREDI_KARTI';
 
 export interface ProductInOrOutDto {
   id: number;
   productId: number;
   productName: string;
+  productCode?: string;
+  customerId?: number;
+  customerName?: string;
+  customerPhone?: string;
   kilograms: number;
   price: number;
   alisSatis: AlisSatis;
   paraTipi: ParaTipi;
+  odemeTip: OdemeTip;
   active: boolean;
   dovizKuru: number;
 }
@@ -28,4 +34,7 @@ export const updateProductMovement = (id: number, data: Omit<ProductInOrOutDto, 
   api.put<ProductInOrOutDto>(`/product-movements/${id}`, data);
 
 export const deleteProductMovement = (id: number) =>
-  api.delete<void>(`/product-movements/${id}`); 
+  api.delete<void>(`/product-movements/${id}`);
+
+export const getProductMovementsByCustomerId = (customerId: number) =>
+  api.get<ProductInOrOutDto[]>(`/product-movements/findByCustomerId/${customerId}`); 

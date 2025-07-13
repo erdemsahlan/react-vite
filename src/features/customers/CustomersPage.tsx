@@ -4,6 +4,7 @@ import { getAllCustomers, createCustomer } from './customersApi';
 import type { CustomerDto } from './customersApi';
 import { Button } from '@/components/ui/button';
 import toastr from 'toastr';
+import { useNavigate } from 'react-router-dom';
 
 const initialForm: Omit<CustomerDto, 'id'> = {
   firstName: '',
@@ -22,6 +23,7 @@ const CustomersPage: React.FC = () => {
   const [form, setForm] = useState<Omit<CustomerDto, 'id'>>(initialForm);
   const [saving, setSaving] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchCustomers();
@@ -118,7 +120,7 @@ const CustomersPage: React.FC = () => {
                     <td style={{ padding: 8, borderBottom: '1px solid #f4f6fb' }}>
                       <Button 
                         variant="outline" 
-                        onClick={() => alert(`Detay: ${customer.id}`)}
+                        onClick={() => navigate(`/customers/${customer.id}`)}
                         style={{
                           background: '#2563eb',
                           color: '#fff',

@@ -8,7 +8,7 @@ import Sidebar from '../../assets/Sidebar';
 import { getAllProducts } from '../products/productsApi';
 import type { ProductDto } from '../products/productsApi';
 import { Button } from '@/components/ui/button';
-import toastr from 'toastr';
+import { useToast } from '@/components/ui/ToastProvider';
 
 // Örnek datatable verisi
 const exampleData = [
@@ -40,6 +40,7 @@ const CustomerDetailPage: React.FC = () => {
   });
   const [saving, setSaving] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
+  const toast = useToast();
 
   useEffect(() => {
     if (!id) return;
@@ -93,31 +94,38 @@ const CustomerDetailPage: React.FC = () => {
     const validationErrors = validateForm();
     if (validationErrors.length > 0) {
       setFormError(validationErrors.join(', '));
+      toast.showToast(validationErrors.join(', '), 'error');
       return;
     }
     setSaving(true);
     setFormError(null);
     try {
-      await createProductMovement({ ...form, customerId: Number(id) });
-      toastr.success('İşlem başarıyla kaydedildi');
-      setShowModal(false);
-      setForm({
-        productId: 0,
-        productName: '',
-        kilograms: 0,
-        price: 0,
-        alisSatis: 'SATIS' as AlisSatis,
-        paraTipi: 'TURKLIRASI' as ParaTipi,
-        odemeTip: 'CEK' as OdemeTip,
-        active: true,
-        dovizKuru: 1,
-      });
-      setMovementsLoading(true);
-      getProductMovementsByCustomerId(Number(id))
-        .then(res => setMovements(res.data))
-        .catch(() => setMovementsError('İşlem geçmişi alınamadı'))
-        .finally(() => setMovementsLoading(false));
+      const res = await createProductMovement({ ...form, customerId: Number(id) });
+      if (res.data.success) {
+        toast.showToast(res.data.message, 'success');
+        setShowModal(false);
+        setForm({
+          productId: 0,
+          productName: '',
+          kilograms: 0,
+          price: 0,
+          alisSatis: 'SATIS' as AlisSatis,
+          paraTipi: 'TURKLIRASI' as ParaTipi,
+          odemeTip: 'CEK' as OdemeTip,
+          active: true,
+          dovizKuru: 1,
+        });
+        setMovementsLoading(true);
+        getProductMovementsByCustomerId(Number(id))
+          .then(res => setMovements(res.data))
+          .catch(() => setMovementsError('İşlem geçmişi alınamadı'))
+          .finally(() => setMovementsLoading(false));
+      } else {
+        toast.showToast(res.data.message, 'error');
+        setFormError(res.data.message);
+      }
     } catch (err) {
+      toast.showToast('Kayıt başarısız!', 'error');
       setFormError('Kayıt başarısız!');
     } finally {
       setSaving(false);
@@ -182,13 +190,13 @@ const CustomerDetailPage: React.FC = () => {
                         <option value="CEK">Çek</option>
                         <option value="NAKIT">Nakit</option>
                         <option value="KREDI_KARTI">Kredi Kartı</option>
+                        <option value="BORC">Borç</option>
                       </select>
                     </div>
                     <div style={{ marginBottom: 18 }}>
                       <label style={{ display: 'block', fontWeight: 600, marginBottom: 4 }}>Müşteri</label>
                       <input value={customer?.firstName + ' ' + customer?.lastName} disabled style={{ width: '100%', padding: 8, borderRadius: 4, border: '1px solid #ccc', background: '#f4f6fb' }} />
                     </div>
-                    {formError && <div style={{ color: 'red', marginBottom: 8 }}>{formError}</div>}
                     <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10 }}>
                       <Button type="button" variant="outline" onClick={() => setShowModal(false)} disabled={saving} style={{ background: '#ef4444', color: '#fff', border: 'none', borderRadius: 20, boxShadow: '0 2px 8px #ef444433', padding: '10px 28px', fontWeight: 600, fontSize: 16, display: 'flex', alignItems: 'center', gap: 7, cursor: 'pointer', transition: 'background 0.2s' }}>Vazgeç</Button>
                       <Button type="submit" disabled={saving} style={{ background: '#22c55e', color: '#fff', border: 'none', borderRadius: 20, boxShadow: '0 2px 8px #22c55e33', padding: '10px 28px', fontWeight: 600, fontSize: 16, display: 'flex', alignItems: 'center', gap: 7, cursor: 'pointer', transition: 'background 0.2s' }}>{saving ? 'Kaydediliyor...' : 'Kaydet'}</Button>
@@ -221,7 +229,13 @@ const CustomerDetailPage: React.FC = () => {
                       <td style={{ padding: 8, borderBottom: '1px solid #f4f6fb' }}>{row.kilograms}</td>
                       <td style={{ padding: 8, borderBottom: '1px solid #f4f6fb' }}>{row.price}</td>
                       <td style={{ padding: 8, borderBottom: '1px solid #f4f6fb' }}>{row.paraTipi}</td>
-                      <td style={{ padding: 8, borderBottom: '1px solid #f4f6fb' }}>{row.odemeTip}</td>
+                      <td style={{ padding: 8, borderBottom: '1px solid #f4f6fb' }}>{
+                        row.odemeTip === 'CEK' ? 'Çek' :
+                        row.odemeTip === 'NAKIT' ? 'Nakit' :
+                        row.odemeTip === 'KREDI_KARTI' ? 'Kredi Kartı' :
+                        row.odemeTip === 'BORC' ? 'Borç' :
+                        row.odemeTip || 'N/A'
+                      }</td>
                     </tr>
                   ))}
                 </tbody>

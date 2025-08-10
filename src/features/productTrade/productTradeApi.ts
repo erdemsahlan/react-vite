@@ -2,7 +2,7 @@ import api from '@/api';
 
 export type AlisSatis = 'ALIS' | 'SATIS';
 export type ParaTipi = 'TURKLIRASI' | 'DOLAR' | 'EURO';
-export type OdemeTip = 'CEK' | 'NAKIT' | 'KREDI_KARTI';
+export type OdemeTip = 'CEK' | 'NAKIT' | 'KREDI_KARTI' | 'BORC';
 
 export interface ProductInOrOutDto {
   id: number;
@@ -21,8 +21,13 @@ export interface ProductInOrOutDto {
   dovizKuru: number;
 }
 
+export interface ProductSaveResponse {
+  success: boolean;
+  message: string;
+}
+
 export const createProductMovement = (data: Omit<ProductInOrOutDto, 'id'>) =>
-  api.post<ProductInOrOutDto>('/product-movements', data);
+  api.post<ProductSaveResponse>('/product-movements', data);
 
 export const getProductMovementById = (id: number) =>
   api.get<ProductInOrOutDto>(`/product-movements/${id}`);
